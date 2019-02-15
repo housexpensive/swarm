@@ -1,0 +1,45 @@
+On 5 VM
+mgr1
+node1
+node2
+jenkins
+mongodb1
+
+on local remote to mgr1
+$vagrant ssh mgr1
+Go inside mgr1
+#docker swarm init --advertise-addr=192.168.33.12
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-37qe1s057y8xqx0riqhdf4adxqbyg3k4471ge5fp1kh9ms12ka-6k0z9afvceg4v7pterwt82xi0 192.168.33.12:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+Go to node1
+Ctrl+D
+$vagrant ssh node1
+Go inside node1
+#docker swarm join --token SWMTKN-1-37qe1s057y8xqx0riqhdf4adxqbyg3k4471ge5fp1kh9ms12ka-6k0z9afvceg4v7pterwt82xi0 192.168.33.12:2377
+Ctrl+D
+Go to mgr1
+$vagrant ssh mgr1
+Inside mgr1 to Create 2 Replicas nginx
+#docker service create --replicas 2 --name nginx --constraint "node.role !=manager" --publish 80:80 nginx
+#docker service scale nginx=4
+#docker service ps nginx
+#docker service rm nginx
+
+LAB
+Go to node 2
+$vagrant ssh node2
+Go inside nod2
+#docker swarm join --token SWMTKN-1-37qe1s057y8xqx0riqhdf4adxqbyg3k4471ge5fp1kh9ms12ka-6k0z9afvceg4v7pterwt82xi0 192.168.33.12:2377
+^ IF Dont know go to mgr1 "#docker swarm join-token worker" to generate command
+Ctrl+D
+
+
+Go to Mgr1
+#docker service create --replicas 2 --name demo --constraint "node.role !=manager" --publish 80:80 nginx
+#docker service create --replicas 2 --name demoApi --constraint "node.role !=manager" --publish 81:80 nginx
+#docker service ls
+#docker ps demo
+#docker ps demoApi
